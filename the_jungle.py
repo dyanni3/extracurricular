@@ -1,6 +1,17 @@
 from bs4 import BeautifulSoup
 import requests
 import re
+import time
+import random
+
+cpython_url = 'https://github.com/python/cpython/blob/master/Python/pythonrun.c'
+soup = BeautifulSoup(requests.get(cpython_url).text, 'html.parser')
+cpython_soup = soup.find("div",{"itemprop":"text", "class":"Box-body p-0 blob-wrapper data type-c"})
+tds = cpython_soup.find_all('td', {"class":"blob-code blob-code-inner js-file-line"})
+cpython_code_lines = []
+for td in tds:
+    cpython_code_lines.append(
+        ''.join([thing.text+" " for thing in td.find_all('span') if len(thing.text)>1]))
 
 url = "http://www.gutenberg.org/files/140/140-h/140-h.htm#link2HCH0002"
 book = requests.get(url)
@@ -40,6 +51,7 @@ print("Type any other key to continue reading")
 print("Enjoy!")
 
 x = 'y'
+busy = False
 while(True):
 
     if first_read == True:
@@ -52,6 +64,13 @@ while(True):
 
     if chapter == 'q' or x == 'q':
         break
+    while(chapter == 'b' or x == 'b'):
+        busy = True
+        i = random.randint(0, len(cpython_code_lines))
+        for j in range(100):
+            print(cpython_code_lines[(i+j)%len(cpython_code_lines)])
+            time.sleep(.03)
+        x = input("jungle_reader.busy_flag .. ..")
     try:
         print(chapters[chapter][pars_counter].prettify())
         pars_counter+=1
@@ -67,7 +86,7 @@ while(True):
             chapter += 1
             pars_counter = 0
         else:
-            print("Goodbye!")
             break
 
+print("Goodbye!")
 
