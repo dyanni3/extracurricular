@@ -32,7 +32,7 @@ def get_jungle():
     for i in range(1, len(chapters_soup)):
         pars = chapters_soup[i].find_all('p')
         chapters[i] = pars
-    return(pars)
+    return(chapters)
 
 if __name__=='__main__':
 
